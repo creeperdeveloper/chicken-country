@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chicken Country</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f8f9fa;
+      --text-color: #212529;
+      --card-bg: #ffffff;
+      --header-bg: linear-gradient(135deg, #ff9a00, #ff6a00);
+      --button-bg: #ff9a00;
+      --button-hover: #ff6a00;
+      --border-color: #e9ecef;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --accent: #ff6a00;
+      --accent-light: #ff9a00;
+      --muted: #6c757d;
+      --link: #0066ff;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: #f8f9fa;
+      --card-bg: #1e1e1e;
+      --header-bg: linear-gradient(135deg, #ff6a00, #ff4500);
+      --button-bg: #ff6a00;
+      --button-hover: #ff4500;
+      --border-color: #2a2a2a;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+      --accent: #ff4500;
+      --accent-light: #ff6a00;
+      --muted: #adb5bd;
+      --link: #66a3ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: var(--transition);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      min-height: 100vh;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    header {
+      background: var(--header-bg);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 1.75rem;
+      margin: 0;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+      padding: 2rem;
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .theme-toggle,
+    .language-toggle {
+      background-color: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      position: relative;
+      border-radius: 50%;
+    }
+
+    .language-toggle {
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .theme-toggle:hover,
+    .language-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .theme-toggle .icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      color: white;
+    }
+
+    .theme-toggle .sun {
+      opacity: 1;
+      display: block;
+    }
+
+    .theme-toggle .moon {
+      opacity: 0;
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .sun {
+      opacity: 0;
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .moon {
+      opacity: 1;
+      display: block;
+    }
+
+    .member-list,
+    .url-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .member-card,
+    .url-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .member-card::before,
+    .url-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+      opacity: 0.8;
+    }
+
+    .member-card:hover,
+    .url-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .member-card h3,
+    .url-card h3 {
+      color: var(--accent);
+    }
+
+    .member-card p {
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .member-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .member-card p strong,
+    .url-card p strong {
+      font-weight: 600;
+      color: var(--accent-light);
+    }
+
+    .url-card a {
+      color: var(--link);
+      word-break: break-all;
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-block;
+      margin: 0.5rem 0;
+      transition: var(--transition);
+    }
+
+    .url-card a:hover {
+      text-decoration: underline;
+    }
+
+    .url-card p {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    button {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      transition: var(--transition);
+    }
+
+    button {
+      background-color: var(--button-bg);
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      border: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    button:hover {
+      background-color: var(--button-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .debug-info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      z-index: 1000;
+      display: none;
+    }
+
+    /* About section styles */
+    .about-content {
+      min-height: 150px;
+      padding: 1rem;
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.5rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+    }
+
+    .about-content:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.2);
+    }
+
+    .edit-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .security-link {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--accent);
+      color: white;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .security-link:hover {
+      background-color: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    @media (max-width: 768px) {
+
+      .member-list,
+      .url-list {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 0 1rem;
+        margin: 1.5rem auto;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+
+      header {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .edit-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .member-card,
+    .url-card {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .member-card:nth-child(2),
+    .url-card:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .member-card:nth-child(3),
+    .url-card:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1 id="site-title">Chicken Country</h1>
+    <div class="header-controls">
+      <button class="language-toggle" id="languageToggle">日本語</button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- About Section -->
+    <div class="section">
+      <h2 id="about-title">About</h2>
+      <div class="edit-controls">
+        <button id="editAboutBtn" style="display: none;">Edit</button>
+        <button id="saveAboutBtn" style="display: none;">Save</button>
+        <button id="cancelAboutBtn" style="display: none;">Cancel</button>
+      </div>
+      <div id="aboutContent" class="about-content" contenteditable="false">
+        <!-- Default about content -->
+        <p>Welcome to Chicken Country, the premier destination for chicken enthusiasts!</p>
+        <p>Founded in 2023, our mission is to celebrate all things chicken and bring together a community of chicken
+          lovers from around the world.</p>
+        <p>Our team of dedicated chicken experts works tirelessly to provide the best chicken-related content and
+          resources.</p>
+      </div>
+      <a href="security_data.html" class="security-link" id="securityLink">Security Information</a>
+    </div>
+
+    <!-- Members Section -->
+    <div class="section">
+      <h2 id="members-title">Members</h2>
+      <div class="member-list" id="memberList">
+        <!-- Members will be displayed here -->
+      </div>
+    </div>
+
+    <!-- URLs Section -->
+    <div class="section">
+      <h2 id="urls-title">URL Management</h2>
+      <div class="url-list" id="urlList">
+        <!-- URLs will be displayed here -->
+      </div>
+    </div>
+  </div>
+
+  <div id="debugInfo" class="debug-info"></div>
+
+  <script>
+    // Debug function
+    function debug(message) {
+      const debugElement = document.getElementById('debugInfo');
+      debugElement.style.display = 'block';
+      debugElement.textContent = message;
+      console.log(message);
+    }
+
+    // Language translations
+    const translations = {
+      en: {
+        siteTitle: 'Chicken Country',
+        aboutTitle: 'About',
+        membersTitle: 'Members',
+        urlsTitle: 'URL',
+        role: 'Role',
+        permissions: 'Permissions',
+        notes: 'Notes',
+        languageButton: '日本語',
+        editButton: 'Edit',
+        saveButton: 'Save',
+        cancelButton: 'Cancel',
+        securityLink: 'Security Information'
+      },
+      ja: {
+        siteTitle: 'Chicken Country',
+        aboutTitle: 'チキン国について',
+        membersTitle: 'メンバー',
+        urlsTitle: 'URL',
+        role: '役職',
+        permissions: '権限',
+        notes: 'メモ',
+        languageButton: 'English',
+        editButton: '編集',
+        saveButton: '保存',
+        cancelButton: 'キャンセル',
+        securityLink: 'セキュリティ情報'
+      }
+    };
+
+    // Current language
+    let currentLanguage = 'en';
+
+    // About content management
+    const aboutContent = document.getElementById('aboutContent');
+    const editAboutBtn = document.getElementById('editAboutBtn');
+    const saveAboutBtn = document.getElementById('saveAboutBtn');
+    const cancelAboutBtn = document.getElementById('cancelAboutBtn');
+
+    // Load saved about content
+    const savedAboutContent = localStorage.getItem('aboutContent');
+    if (savedAboutContent) {
+      aboutContent.innerHTML = savedAboutContent;
+    }
+
+    // Edit about content
+    editAboutBtn.addEventListener('click', () => {
+      aboutContent.contentEditable = true;
+      aboutContent.focus();
+      editAboutBtn.style.display = 'none';
+      saveAboutBtn.style.display = 'inline-block';
+      cancelAboutBtn.style.display = 'inline-block';
+    });
+
+    // Save about content
+    saveAboutBtn.addEventListener('click', () => {
+      aboutContent.contentEditable = false;
+      localStorage.setItem('aboutContent', aboutContent.innerHTML);
+      editAboutBtn.style.display = 'inline-block';
+      saveAboutBtn.style.display = 'none';
+      cancelAboutBtn.style.display = 'none';
+    });
+
+    // Cancel editing
+    cancelAboutBtn.addEventListener('click', () => {
+      aboutContent.contentEditable = false;
+      aboutContent.innerHTML = localStorage.getItem('aboutContent') || aboutContent.innerHTML;
+      editAboutBtn.style.display = 'inline-block';
+      saveAboutBtn.style.display = 'none';
+      cancelAboutBtn.style.display = 'none';
+    });
+
+    // Member management
+    const members = [
+      {
+        id: 1,
+        name: 'FlimsyDeer05833',
+        nameJa: 'FlimsyDeer05833',
+        role: 'Founder / Leader',
+        roleJa: '創設者 / リーダー',
+        permissions: 'Admin',
+        permissionsJa: '管理者',
+        notes: 'Founder of Chicken Country',
+        notesJa: 'チキン国の創設者'
+      },
+      {
+        id: 2,
+        name: 'ozisan',
+        nameJa: 'ozisan',
+        role: 'In charge of collecting supplies',
+        roleJa: '物資集め担当',
+        permissions: 'Admin',
+        permissionsJa: 'Admin',
+        notes: 'none',
+        notesJa: 'なし'
+      },
+      // {
+      //   id: 3,
+      //   name: '',
+      //   nameJa: '',
+      //   role: '',
+      //   roleJa: '',
+      //   permissions: '',
+      //   permissionsJa: '',
+      //   notes: '',
+      //   notesJa: ''
+      // }
+    ];
+
+    // URL management
+    const urls = [
+      {
+        id: 1,
+        name: 'Official Discord',
+        nameJa: '公式ディスコード',
+        url: 'https://discord.gg/WK9RdXFjhp',
+        description: "Chicken country meetings and security discussions take place here.",
+        descriptionJa: 'チキン国の会議・セキュリティに関しての会話はここで行われます。'
+      }
+    ];
+
+    // Display members
+    function renderMembers() {
+      const memberList = document.getElementById('memberList');
+      if (!memberList) {
+        debug('Member list element not found');
+        return;
+      }
+
+      memberList.innerHTML = '';
+
+      members.forEach(member => {
+        const memberCard = document.createElement('div');
+        memberCard.className = 'member-card';
+
+        const name = currentLanguage === 'en' ? member.name : member.nameJa;
+        const role = currentLanguage === 'en' ? member.role : member.roleJa;
+        const permissions = currentLanguage === 'en' ? member.permissions : member.permissionsJa;
+        const notes = currentLanguage === 'en' ? member.notes : member.notesJa;
+        const roleLabel = translations[currentLanguage].role;
+        const permissionsLabel = translations[currentLanguage].permissions;
+        const notesLabel = translations[currentLanguage].notes;
+
+        memberCard.innerHTML = `
+                    <h3>${name}</h3>
+                    <p><strong>${roleLabel}:</strong> ${role}</p>
+                    <p><strong>${permissionsLabel}:</strong> ${permissions}</p>
+                    <p><strong>${notesLabel}:</strong> ${notes}</p>
+                `;
+        memberList.appendChild(memberCard);
+      });
+    }
+
+    // Display URLs
+    function renderUrls() {
+      const urlList = document.getElementById('urlList');
+      if (!urlList) {
+        debug('URL list element not found');
+        return;
+      }
+
+      urlList.innerHTML = '';
+
+      urls.forEach(url => {
+        const urlCard = document.createElement('div');
+        urlCard.className = 'url-card';
+
+        const name = currentLanguage === 'en' ? url.name : url.nameJa;
+        const description = currentLanguage === 'en' ? url.description : url.descriptionJa;
+
+        urlCard.innerHTML = `
+                    <h3>${name}</h3>
+                    <a href="${url.url}" target="_blank">${url.url}</a>
+                    <p>${description || ''}</p>
+                `;
+        urlList.appendChild(urlCard);
+      });
+    }
+
+    // Update language function
+    function updateLanguage() {
+      try {
+        // Update UI text
+        const siteTitle = document.getElementById('site-title');
+        const aboutTitle = document.getElementById('about-title');
+        const membersTitle = document.getElementById('members-title');
+        const urlsTitle = document.getElementById('urls-title');
+        const langToggle = document.getElementById('languageToggle');
+        const editBtn = document.getElementById('editAboutBtn');
+        const saveBtn = document.getElementById('saveAboutBtn');
+        const cancelBtn = document.getElementById('cancelAboutBtn');
+        const securityLink = document.getElementById('securityLink');
+
+        if (siteTitle) siteTitle.textContent = translations[currentLanguage].siteTitle;
+        if (aboutTitle) aboutTitle.textContent = translations[currentLanguage].aboutTitle;
+        if (membersTitle) membersTitle.textContent = translations[currentLanguage].membersTitle;
+        if (urlsTitle) urlsTitle.textContent = translations[currentLanguage].urlsTitle;
+        if (langToggle) langToggle.textContent = translations[currentLanguage].languageButton;
+        if (editBtn) editBtn.textContent = translations[currentLanguage].editButton;
+        if (saveBtn) saveBtn.textContent = translations[currentLanguage].saveButton;
+        if (cancelBtn) cancelBtn.textContent = translations[currentLanguage].cancelButton;
+        if (securityLink) securityLink.textContent = translations[currentLanguage].securityLink;
+
+        // Re-render members and URLs with new language
+        renderMembers();
+        renderUrls();
+
+        // Update HTML lang attribute
+        document.documentElement.lang = currentLanguage;
+      } catch (error) {
+        debug('Error in updateLanguage: ' + error.message);
+      }
+    }
+
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      body.setAttribute('data-theme', savedTheme);
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // Language toggle functionality
+    const languageToggle = document.getElementById('languageToggle');
+
+    // Check for saved language preference
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage) {
+      currentLanguage = savedLanguage;
+    }
+
+    languageToggle.addEventListener('click', () => {
+      try {
+        currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
+        localStorage.setItem('language', currentLanguage);
+        updateLanguage();
+      } catch (error) {
+        debug('Error in language toggle: ' + error.message);
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        updateLanguage();
+      } catch (error) {
+        debug('Error during initialization: ' + error.message);
+      }
+    });
+  </script>
+</body>
+
+</html>
