@@ -466,23 +466,6 @@
     .security-card:nth-child(7) {
       animation-delay: 0.6s;
     }
-    
-    /* Fallback styles to ensure something is always visible */
-    .fallback-message {
-      max-width: 500px;
-      margin: 5rem auto;
-      padding: 2rem;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--border-color);
-      text-align: center;
-      display: none;
-    }
-    
-    [data-theme="dark"] .fallback-message {
-      background-color: rgba(30, 30, 30, 0.9);
-    }
   </style>
 </head>
 
@@ -561,13 +544,6 @@
         <!-- Security items will be displayed here -->
       </div>
     </div>
-  </div>
-  
-  <!-- Fallback message in case neither container is visible -->
-  <div class="fallback-message" id="fallbackMessage">
-    <h2>Loading Security Information...</h2>
-    <p>If this message persists, please <a href="security_data.html">refresh the page</a>.</p>
-    <p>Or return to <a href="index.html">Home</a>.</p>
   </div>
 
   <script>
@@ -701,7 +677,6 @@
 
       const loginContainer = getElement('loginContainer');
       const securityContent = getElement('securityContent');
-      const fallbackMessage = getElement('fallbackMessage');
       const errorMessage = getElement('errorMessage');
       const loginForm = getElement('loginForm');
 
@@ -775,46 +750,34 @@
         }
       }
 
-      // Check authentication status and show appropriate content
-      function checkAuthAndShowContent() {
-        console.log("Checking authentication status");
+      // Initialize the page - always show login screen
+      function initializePage() {
+        console.log("Initializing page");
         try {
-          const isAuthenticated = sessionStorage.getItem('securityAuthenticated') === 'true';
-          console.log("Is authenticated:", isAuthenticated);
-          
-          if (isAuthenticated) {
-            if (loginContainer) {
-              loginContainer.style.display = 'none';
-            }
-            if (securityContent) {
-              securityContent.style.display = 'block';
-              renderSecurityItems();
-            }
-          } else {
-            if (loginContainer) {
-              loginContainer.style.display = 'block';
-            }
-            if (securityContent) {
-              securityContent.style.display = 'none';
-            }
+          // Apply saved theme
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
           }
           
-          // Hide fallback message if either container is visible
-          if (fallbackMessage) {
-            if ((loginContainer && loginContainer.style.display === 'block') || 
-                (securityContent && securityContent.style.display === 'block')) {
-              fallbackMessage.style.display = 'none';
-            } else {
-              // If neither container is visible, show fallback message
-              fallbackMessage.style.display = 'block';
-            }
+          // Apply saved language
+          const savedLanguage = localStorage.getItem('language');
+          if (savedLanguage) {
+            currentLanguage = savedLanguage;
+          }
+          
+          // Update language text
+          updateLanguage();
+          
+          // Always show login screen, hide security content
+          if (loginContainer) {
+            loginContainer.style.display = 'block';
+          }
+          if (securityContent) {
+            securityContent.style.display = 'none';
           }
         } catch (error) {
-          console.error('Error in checkAuthAndShowContent:', error);
-          // Show fallback in case of error
-          if (fallbackMessage) {
-            fallbackMessage.style.display = 'block';
-          }
+          console.error('Error in initializePage:', error);
         }
       }
 
@@ -843,8 +806,9 @@
               errorMessage.textContent = '';
             }
             
-            // Store authentication in session storage (will be cleared when browser is closed)
-            sessionStorage.setItem('securityAuthenticated', 'true');
+            // Render security items when  {
+              errorMessage.textContent = '';
+            }
             
             // Render security items when authenticated
             renderSecurityItems();
@@ -918,36 +882,6 @@
             console.error('Error in login language toggle:', error);
           }
         });
-      }
-
-      // Initialize the page
-      function initializePage() {
-        console.log("Initializing page");
-        try {
-          // Apply saved theme
-          const savedTheme = localStorage.getItem('theme');
-          if (savedTheme) {
-            body.setAttribute('data-theme', savedTheme);
-          }
-          
-          // Apply saved language
-          const savedLanguage = localStorage.getItem('language');
-          if (savedLanguage) {
-            currentLanguage = savedLanguage;
-          }
-          
-          // Update language text
-          updateLanguage();
-          
-          // Check authentication and show appropriate content
-          checkAuthAndShowContent();
-        } catch (error) {
-          console.error('Error in initializePage:', error);
-          // Show fallback in case of error
-          if (fallbackMessage) {
-            fallbackMessage.style.display = 'block';
-          }
-        }
       }
 
       // Run initialization immediately
