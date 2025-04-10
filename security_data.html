@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Security Information - Chicken Country</title>
+  <!-- Add no-cache headers to prevent caching -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -466,6 +470,25 @@
     .security-card:nth-child(7) {
       animation-delay: 0.6s;
     }
+    
+    /* Add logout button styles */
+    .logout-button {
+      margin-top: 1.5rem;
+      padding: 0.5rem 1rem;
+      background-color: var(--danger);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .logout-button:hover {
+      background-color: #b02a37;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
   </style>
 </head>
 
@@ -543,10 +566,21 @@
       <div class="security-list" id="securityList">
         <!-- Security items will be displayed here -->
       </div>
+      
+      <!-- Add a logout button -->
+      <button id="logoutButton" class="logout-button">Logout</button>
     </div>
   </div>
 
   <script>
+    // Force page reload when navigating back to this page
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        // Page is loaded from cache (back/forward navigation)
+        window.location.reload();
+      }
+    });
+    
     // Immediately execute this code to ensure it runs as soon as possible
     (function() {
       console.log("Script starting execution");
@@ -564,7 +598,8 @@
           creator: 'Creator',
           notes: 'Notes',
           languageButton: '日本語',
-          incorrectPassword: 'Incorrect password. Please try again.'
+          incorrectPassword: 'Incorrect password. Please try again.',
+          logoutButton: 'Logout'
         },
         ja: {
           loginTitle: 'セキュリティ情報',
@@ -577,7 +612,8 @@
           creator: '作成者',
           notes: 'メモ',
           languageButton: 'English',
-          incorrectPassword: 'パスワードが間違っています。もう一度お試しください。'
+          incorrectPassword: 'パスワードが間違っています。もう一度お試しください。',
+          logoutButton: 'ログアウト'
         }
       };
 
@@ -679,6 +715,7 @@
       const securityContent = getElement('securityContent');
       const errorMessage = getElement('errorMessage');
       const loginForm = getElement('loginForm');
+      const logoutButton = getElement('logoutButton');
 
       // Display security items
       function renderSecurityItems() {
@@ -727,7 +764,8 @@
             'back-link': translations[currentLanguage].backLink,
             'security-title': translations[currentLanguage].securityTitle,
             'languageToggle': translations[currentLanguage].languageButton,
-            'loginLanguageToggle': translations[currentLanguage].languageButton
+            'loginLanguageToggle': translations[currentLanguage].languageButton,
+            'logoutButton': translations[currentLanguage].logoutButton
           };
 
           // Update each element if it exists
@@ -806,10 +844,6 @@
               errorMessage.textContent = '';
             }
             
-            // Render security items when  {
-              errorMessage.textContent = '';
-            }
-            
             // Render security items when authenticated
             renderSecurityItems();
           } else {
@@ -817,6 +851,19 @@
             if (errorMessage) {
               errorMessage.textContent = translations[currentLanguage].incorrectPassword;
             }
+          }
+        });
+      }
+      
+      // Logout button handling
+      if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+          // Show login screen, hide security content
+          if (loginContainer) {
+            loginContainer.style.display = 'block';
+          }
+          if (securityContent) {
+            securityContent.style.display = 'none';
           }
         });
       }
@@ -883,6 +930,12 @@
           }
         });
       }
+
+      // Add event listener for back/forward navigation
+      window.addEventListener('popstate', function() {
+        // Force reload to ensure login screen is shown
+        window.location.reload();
+      });
 
       // Run initialization immediately
       initializePage();
