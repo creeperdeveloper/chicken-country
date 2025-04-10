@@ -546,25 +546,6 @@
   </div>
 
   <script>
-    // Password hashing function
-    async function sha256(message) {
-      // encode as UTF-8
-      const msgBuffer = new TextEncoder().encode(message);                    
-      // hash the message
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      // convert ArrayBuffer to Array
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      // convert bytes to hex string                  
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
-    }
-
-    // IMPORTANT: To change the password, you need to generate a new hash
-    // The current hash is for "chicken is top! (main_super_2)"
-    // You can generate a new hash by using the function above with your new password
-    const passwordHash = "8c5e2f3a5b1e4d7c9a6f3e2d1b5a8c7e6f3d2a1b5c8e7f4d2a1b5c8e7f3d2a1b5";
-    const salt = "chicken_country_salt_2023";
-
     // Language translations
     const translations = {
       en: {
@@ -604,15 +585,16 @@
     const securityContent = document.getElementById('securityContent');
     const errorMessage = document.getElementById('errorMessage');
 
-    loginForm.addEventListener('submit', async function (e) {
+    // Simple password check - using direct comparison for simplicity
+    // The password is "chicken is top! (main_super_2)"
+    const correctPassword = "chicken is top! (main_super_2)";
+
+    loginForm.addEventListener('submit', function (e) {
       e.preventDefault();
       const password = document.getElementById('password').value;
       
-      // Hash the password with salt
-      const hashedInput = await sha256(password + salt);
-      
-      // Check if the hash matches
-      if (hashedInput === passwordHash) {
+      // Direct password check
+      if (password === correctPassword) {
         // Correct password
         loginContainer.style.display = 'none';
         securityContent.style.display = 'block';
@@ -621,6 +603,9 @@
         
         // Store authentication in session storage (will be cleared when browser is closed)
         sessionStorage.setItem('securityAuthenticated', 'true');
+        
+        // Render security items when authenticated
+        renderSecurityItems();
       } else {
         // Incorrect password
         errorMessage.textContent = translations[currentLanguage].incorrectPassword;
@@ -631,6 +616,8 @@
     if (sessionStorage.getItem('securityAuthenticated') === 'true') {
       loginContainer.style.display = 'none';
       securityContent.style.display = 'block';
+      // Render security items when already authenticated
+      renderSecurityItems();
     }
 
     // Security information as objects
@@ -767,7 +754,9 @@
         if (loginLangToggle) loginLangToggle.textContent = translations[currentLanguage].languageButton;
 
         // Re-render security items with new language
-        renderSecurityItems();
+        if (securityContent.style.display === 'block') {
+          renderSecurityItems();
+        }
 
         // Update HTML lang attribute
         document.documentElement.lang = currentLanguage;
