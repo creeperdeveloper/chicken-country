@@ -158,6 +158,7 @@
       backdrop-filter: blur(10px);
       position: relative;
       overflow: hidden;
+      display: block; /* Explicitly set display */
     }
 
     .login-header {
@@ -244,7 +245,7 @@
     }
 
     .security-content {
-      display: none;
+      display: none; /* Explicitly set display */
     }
 
     .security-list {
@@ -465,6 +466,23 @@
     .security-card:nth-child(7) {
       animation-delay: 0.6s;
     }
+    
+    /* Fallback styles to ensure something is always visible */
+    .fallback-message {
+      max-width: 500px;
+      margin: 5rem auto;
+      padding: 2rem;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      text-align: center;
+      display: none;
+    }
+    
+    [data-theme="dark"] .fallback-message {
+      background-color: rgba(30, 30, 30, 0.9);
+    }
   </style>
 </head>
 
@@ -544,324 +562,409 @@
       </div>
     </div>
   </div>
+  
+  <!-- Fallback message in case neither container is visible -->
+  <div class="fallback-message" id="fallbackMessage">
+    <h2>Loading Security Information...</h2>
+    <p>If this message persists, please <a href="security_data.html">refresh the page</a>.</p>
+    <p>Or return to <a href="index.html">Home</a>.</p>
+  </div>
 
   <script>
-    // Language translations
-    const translations = {
-      en: {
-        loginTitle: 'Security Information',
-        loginDescription: 'Please enter the password to access security information.',
-        passwordLabel: 'Password',
-        loginButton: 'Access Information',
-        backLink: '← Back to Home',
-        securityTitle: 'Security Information',
-        overview: 'Overview',
-        creator: 'Creator',
-        notes: 'Notes',
-        languageButton: '日本語',
-        incorrectPassword: 'Incorrect password. Please try again.'
-      },
-      ja: {
-        loginTitle: 'セキュリティ情報',
-        loginDescription: 'セキュリティ情報にアクセスするにはパスワードを入力してください。',
-        passwordLabel: 'パスワード',
-        loginButton: '情報にアクセス',
-        backLink: '← ホームに戻る',
-        securityTitle: 'セキュリティ情報',
-        overview: '概要',
-        creator: '作成者',
-        notes: 'メモ',
-        languageButton: 'English',
-        incorrectPassword: 'パスワードが間違っています。もう一度お試しください。'
+    // Immediately execute this code to ensure it runs as soon as possible
+    (function() {
+      console.log("Script starting execution");
+      
+      // Language translations
+      const translations = {
+        en: {
+          loginTitle: 'Security Information',
+          loginDescription: 'Please enter the password to access security information.',
+          passwordLabel: 'Password',
+          loginButton: 'Access Information',
+          backLink: '← Back to Home',
+          securityTitle: 'Security Information',
+          overview: 'Overview',
+          creator: 'Creator',
+          notes: 'Notes',
+          languageButton: '日本語',
+          incorrectPassword: 'Incorrect password. Please try again.'
+        },
+        ja: {
+          loginTitle: 'セキュリティ情報',
+          loginDescription: 'セキュリティ情報にアクセスするにはパスワードを入力してください。',
+          passwordLabel: 'パスワード',
+          loginButton: '情報にアクセス',
+          backLink: '← ホームに戻る',
+          securityTitle: 'セキュリティ情報',
+          overview: '概要',
+          creator: '作成者',
+          notes: 'メモ',
+          languageButton: 'English',
+          incorrectPassword: 'パスワードが間違っています。もう一度お試しください。'
+        }
+      };
+
+      // Current language - default to English if not set
+      let currentLanguage = localStorage.getItem('language') || 'en';
+      console.log("Current language:", currentLanguage);
+
+      // The correct password
+      const correctPassword = "chicken is top! (main_super_2)";
+
+      // Security information as objects
+      const securityItems = [
+        {
+          id: 1,
+          name: "オートドアセキュリティ",
+          nameEn: "Auto Door Security",
+          image: "/placeholder.svg?height=180&width=320",
+          overview: "キーカードであくドアでネザライトブロックで出来ている",
+          overviewEn: "Door made of netherite blocks that opens with a key card",
+          creator: "yutty & Flimsy",
+          notes: " ",
+          notesEn: " "
+        }, {
+          id: 2,
+          name: "落とし穴セキュリティ",
+          nameEn: "Pitfall Security",
+          image: "/placeholder.svg?height=180&width=320",
+          overview: "プレイヤーを確実に落として下から攻撃できるようにするセキュリティ",
+          overviewEn: "Security system that reliably drops players and allows attacks from below",
+          creator: "FlimsyDeer05833 / creeper_developer",
+          notes: " ",
+          notesEn: " "
+        },
+        {
+          id: 3,
+          name: "無限迷路セキュリティ",
+          nameEn: "Infinite Maze Security",
+          image: "/placeholder.svg?height=180&width=320",
+          overview: "制御ルームからクリアできるか無限ループするかを設定できるセキュリティ",
+          overviewEn: "Security system where you can set whether it can be cleared or loops infinitely from the control room",
+          creator: "FlimsyDeer05833 / creeper_developer",
+          notes: " ",
+          notesEn: " "
+        },
+        {
+          id: 4,
+          name: "NoEscapeセキュリティ",
+          nameEn: "NoEscape Security",
+          image: "/placeholder.svg?height=180&width=320",
+          overview: "一度入ったらレバーなどを使わない限り戻れないセキュリティ",
+          overviewEn: "Security system where once entered, you cannot return without using levers, etc.",
+          creator: "FlimsyDeer05833 / creeper_developer",
+          notes: " ",
+          notesEn: " "
+        }, {
+          id: 5,
+          name: "手動認証セキュリティ",
+          nameEn: "Manual Authentication Security",
+          image: "/placeholder.svg?height=180&width=320",
+          overview: "プレイヤーが実際に認証を行ってドアがあくセキュリティ 認証失敗した場合は下に落とすセキュリティも開発中",
+          overviewEn: "Security system where players actually perform authentication to open doors. A system to drop players if authentication fails is also under development",
+          creator: "FlimsyDeer05833 / creeper_developer",
+          notes: " ",
+          notesEn: " "
+        }, {
+          id: 6,
+          name: "無限ループ迷路セキュリティ2",
+          nameEn: "Infinite Loop Maze Security 2",
+          image: "/placeholder.svg?height=180&width=320",
+          overview: "制御ルームからクリアできるかを設定できる迷路",
+          overviewEn: "Maze where you can set whether it can be cleared from the control room",
+          creator: "FlimsyDeer05833 / creeper_developer",
+          notes: " ",
+          notesEn: " "
+        }, {
+          id: 7,
+          name: "4Fセキュリティ 作成中",
+          nameEn: "4F Security (In Development)",
+          image: "/placeholder.svg?height=180&width=320",
+          overview: " ",
+          overviewEn: " ",
+          creator: " ",
+          notes: " ",
+          notesEn: " "
+        },
+      ];
+
+      // Get DOM elements - with error handling
+      function getElement(id) {
+        const element = document.getElementById(id);
+        if (!element) {
+          console.error(`Element with ID "${id}" not found`);
+          return null;
+        }
+        return element;
       }
-    };
 
-    // Current language
-    let currentLanguage = localStorage.getItem('language') || 'en';
+      const loginContainer = getElement('loginContainer');
+      const securityContent = getElement('securityContent');
+      const fallbackMessage = getElement('fallbackMessage');
+      const errorMessage = getElement('errorMessage');
+      const loginForm = getElement('loginForm');
 
-    // Get DOM elements
-    const loginContainer = document.getElementById('loginContainer');
-    const securityContent = document.getElementById('securityContent');
-    const errorMessage = document.getElementById('errorMessage');
-    const loginForm = document.getElementById('loginForm');
-
-    // Simple password check - using direct comparison for simplicity
-    // The password is "chicken is top! (main_super_2)"
-    const correctPassword = "chicken is top! (main_super_2)";
-
-    // Security information as objects
-    const securityItems = [
-      {
-        id: 1,
-        name: "オートドアセキュリティ",
-        nameEn: "Auto Door Security",
-        image: "/placeholder.svg?height=180&width=320",
-        overview: "キーカードであくドアでネザライトブロックで出来ている",
-        overviewEn: "Door made of netherite blocks that opens with a key card",
-        creator: "yutty & Flimsy",
-        notes: " ",
-        notesEn: " "
-      }, {
-        id: 2,
-        name: "落とし穴セキュリティ",
-        nameEn: "Pitfall Security",
-        image: "/placeholder.svg?height=180&width=320",
-        overview: "プレイヤーを確実に落として下から攻撃できるようにするセキュリティ",
-        overviewEn: "Security system that reliably drops players and allows attacks from below",
-        creator: "FlimsyDeer05833 / creeper_developer",
-        notes: " ",
-        notesEn: " "
-      },
-      {
-        id: 3,
-        name: "無限迷路セキュリティ",
-        nameEn: "Infinite Maze Security",
-        image: "/placeholder.svg?height=180&width=320",
-        overview: "制御ルームからクリアできるか無限ループするかを設定できるセキュリティ",
-        overviewEn: "Security system where you can set whether it can be cleared or loops infinitely from the control room",
-        creator: "FlimsyDeer05833 / creeper_developer",
-        notes: " ",
-        notesEn: " "
-      },
-      {
-        id: 4,
-        name: "NoEscapeセキュリティ",
-        nameEn: "NoEscape Security",
-        image: "/placeholder.svg?height=180&width=320",
-        overview: "一度入ったらレバーなどを使わない限り戻れないセキュリティ",
-        overviewEn: "Security system where once entered, you cannot return without using levers, etc.",
-        creator: "FlimsyDeer05833 / creeper_developer",
-        notes: " ",
-        notesEn: " "
-      }, {
-        id: 5,
-        name: "手動認証セキュリティ",
-        nameEn: "Manual Authentication Security",
-        image: "/placeholder.svg?height=180&width=320",
-        overview: "プレイヤーが実際に認証を行ってドアがあくセキュリティ 認証失敗した場合は下に落とすセキュリティも開発中",
-        overviewEn: "Security system where players actually perform authentication to open doors. A system to drop players if authentication fails is also under development",
-        creator: "FlimsyDeer05833 / creeper_developer",
-        notes: " ",
-        notesEn: " "
-      }, {
-        id: 6,
-        name: "無限ループ迷路セキュリティ2",
-        nameEn: "Infinite Loop Maze Security 2",
-        image: "/placeholder.svg?height=180&width=320",
-        overview: "制御ルームからクリアできるかを設定できる迷路",
-        overviewEn: "Maze where you can set whether it can be cleared from the control room",
-        creator: "FlimsyDeer05833 / creeper_developer",
-        notes: " ",
-        notesEn: " "
-      }, {
-        id: 7,
-        name: "4Fセキュリティ 作成中",
-        nameEn: "4F Security (In Development)",
-        image: "/placeholder.svg?height=180&width=320",
-        overview: " ",
-        overviewEn: " ",
-        creator: " ",
-        notes: " ",
-        notesEn: " "
-      },
-    ];
-
-    // Display security items
-    function renderSecurityItems() {
-      const securityList = document.getElementById('securityList');
-      if (!securityList) {
-        console.error('Security list element not found');
-        return;
-      }
-
-      securityList.innerHTML = '';
-
-      securityItems.forEach(item => {
-        const securityCard = document.createElement('div');
-        securityCard.className = 'security-card';
-
-        const name = currentLanguage === 'en' ? item.nameEn : item.name;
-        const overview = currentLanguage === 'en' ? item.overviewEn : item.overview;
-        const notes = currentLanguage === 'en' ? item.notesEn : item.notes;
-        const overviewLabel = translations[currentLanguage].overview;
-        const creatorLabel = translations[currentLanguage].creator;
-        const notesLabel = translations[currentLanguage].notes;
-
-        securityCard.innerHTML = `
-                    <img src="${item.image}" alt="${name}" class="security-image">
-                    <h3>${name}</h3>
-                    <p><strong>${overviewLabel}:</strong> ${overview}</p>
-                    <p><strong>${creatorLabel}:</strong> ${item.creator}</p>
-                    <p><strong>${notesLabel}:</strong> ${notes}</p>
-                `;
-        securityList.appendChild(securityCard);
-      });
-    }
-
-    // Update language function
-    function updateLanguage() {
-      try {
-        // Update UI text
-        const loginTitle = document.getElementById('login-title');
-        const loginDescription = document.getElementById('login-description');
-        const passwordLabel = document.getElementById('password-label');
-        const loginButton = document.getElementById('login-button');
-        const loginBackLink = document.getElementById('login-back-link');
-        const backLink = document.getElementById('back-link');
-        const securityTitle = document.getElementById('security-title');
-        const langToggle = document.getElementById('languageToggle');
-        const loginLangToggle = document.getElementById('loginLanguageToggle');
-
-        if (loginTitle) loginTitle.textContent = translations[currentLanguage].loginTitle;
-        if (loginDescription) loginDescription.textContent = translations[currentLanguage].loginDescription;
-        if (passwordLabel) passwordLabel.textContent = translations[currentLanguage].passwordLabel;
-        if (loginButton) loginButton.textContent = translations[currentLanguage].loginButton;
-        if (loginBackLink) loginBackLink.textContent = translations[currentLanguage].backLink;
-        if (backLink) backLink.textContent = translations[currentLanguage].backLink;
-        if (securityTitle) securityTitle.textContent = translations[currentLanguage].securityTitle;
-        if (langToggle) langToggle.textContent = translations[currentLanguage].languageButton;
-        if (loginLangToggle) loginLangToggle.textContent = translations[currentLanguage].languageButton;
-
-        // Re-render security items with new language
-        if (securityContent.style.display === 'block') {
-          renderSecurityItems();
+      // Display security items
+      function renderSecurityItems() {
+        console.log("Rendering security items");
+        const securityList = getElement('securityList');
+        if (!securityList) {
+          console.error('Security list element not found');
+          return;
         }
 
-        // Update HTML lang attribute
-        document.documentElement.lang = currentLanguage;
-      } catch (error) {
-        console.error('Error in updateLanguage: ' + error.message);
+        securityList.innerHTML = '';
+
+        securityItems.forEach(item => {
+          const securityCard = document.createElement('div');
+          securityCard.className = 'security-card';
+
+          const name = currentLanguage === 'en' ? item.nameEn : item.name;
+          const overview = currentLanguage === 'en' ? item.overviewEn : item.overview;
+          const notes = currentLanguage === 'en' ? item.notesEn : item.notes;
+          const overviewLabel = translations[currentLanguage].overview;
+          const creatorLabel = translations[currentLanguage].creator;
+          const notesLabel = translations[currentLanguage].notes;
+
+          securityCard.innerHTML = `
+            <img src="${item.image}" alt="${name}" class="security-image">
+            <h3>${name}</h3>
+            <p><strong>${overviewLabel}:</strong> ${overview}</p>
+            <p><strong>${creatorLabel}:</strong> ${item.creator}</p>
+            <p><strong>${notesLabel}:</strong> ${notes}</p>
+          `;
+          securityList.appendChild(securityCard);
+        });
       }
-    }
 
-    // Check authentication status and show appropriate content
-    function checkAuthAndShowContent() {
-      if (sessionStorage.getItem('securityAuthenticated') === 'true') {
-        loginContainer.style.display = 'none';
-        securityContent.style.display = 'block';
-        renderSecurityItems();
-      } else {
-        loginContainer.style.display = 'block';
-        securityContent.style.display = 'none';
-      }
-    }
-
-    // Login form handling
-    if (loginForm) {
-      loginForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const password = document.getElementById('password').value;
-        
-        // Direct password check
-        if (password === correctPassword) {
-          // Correct password
-          loginContainer.style.display = 'none';
-          securityContent.style.display = 'block';
-          document.getElementById('password').value = '';
-          errorMessage.textContent = '';
-          
-          // Store authentication in session storage (will be cleared when browser is closed)
-          sessionStorage.setItem('securityAuthenticated', 'true');
-          
-          // Render security items when authenticated
-          renderSecurityItems();
-        } else {
-          // Incorrect password
-          errorMessage.textContent = translations[currentLanguage].incorrectPassword;
-        }
-      });
-    }
-
-    // Theme toggle functionality
-    const themeToggle = document.getElementById('themeToggle');
-    const loginThemeToggle = document.getElementById('loginThemeToggle');
-    const body = document.body;
-
-    // Check for saved theme preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      body.setAttribute('data-theme', savedTheme);
-    }
-
-    // Main content theme toggle
-    if (themeToggle) {
-      themeToggle.addEventListener('click', () => {
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-      });
-    }
-
-    // Login screen theme toggle
-    if (loginThemeToggle) {
-      loginThemeToggle.addEventListener('click', () => {
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-      });
-    }
-
-    // Language toggle functionality
-    const languageToggle = document.getElementById('languageToggle');
-    const loginLanguageToggle = document.getElementById('loginLanguageToggle');
-
-    // Main content language toggle
-    if (languageToggle) {
-      languageToggle.addEventListener('click', () => {
+      // Update language function
+      function updateLanguage() {
+        console.log("Updating language to:", currentLanguage);
         try {
-          currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
-          localStorage.setItem('language', currentLanguage);
-          updateLanguage();
-        } catch (error) {
-          console.error('Error in language toggle: ' + error.message);
-        }
-      });
-    }
+          // Update UI text
+          const elements = {
+            'login-title': translations[currentLanguage].loginTitle,
+            'login-description': translations[currentLanguage].loginDescription,
+            'password-label': translations[currentLanguage].passwordLabel,
+            'login-button': translations[currentLanguage].loginButton,
+            'login-back-link': translations[currentLanguage].backLink,
+            'back-link': translations[currentLanguage].backLink,
+            'security-title': translations[currentLanguage].securityTitle,
+            'languageToggle': translations[currentLanguage].languageButton,
+            'loginLanguageToggle': translations[currentLanguage].languageButton
+          };
 
-    // Login screen language toggle
-    if (loginLanguageToggle) {
-      loginLanguageToggle.addEventListener('click', () => {
+          // Update each element if it exists
+          for (const [id, text] of Object.entries(elements)) {
+            const element = getElement(id);
+            if (element) {
+              element.textContent = text;
+            }
+          }
+
+          // Re-render security items with new language
+          if (securityContent && securityContent.style.display === 'block') {
+            renderSecurityItems();
+          }
+
+          // Update HTML lang attribute
+          document.documentElement.lang = currentLanguage;
+        } catch (error) {
+          console.error('Error in updateLanguage:', error);
+        }
+      }
+
+      // Check authentication status and show appropriate content
+      function checkAuthAndShowContent() {
+        console.log("Checking authentication status");
         try {
-          currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
-          localStorage.setItem('language', currentLanguage);
-          updateLanguage();
+          const isAuthenticated = sessionStorage.getItem('securityAuthenticated') === 'true';
+          console.log("Is authenticated:", isAuthenticated);
+          
+          if (isAuthenticated) {
+            if (loginContainer) {
+              loginContainer.style.display = 'none';
+            }
+            if (securityContent) {
+              securityContent.style.display = 'block';
+              renderSecurityItems();
+            }
+          } else {
+            if (loginContainer) {
+              loginContainer.style.display = 'block';
+            }
+            if (securityContent) {
+              securityContent.style.display = 'none';
+            }
+          }
+          
+          // Hide fallback message if either container is visible
+          if (fallbackMessage) {
+            if ((loginContainer && loginContainer.style.display === 'block') || 
+                (securityContent && securityContent.style.display === 'block')) {
+              fallbackMessage.style.display = 'none';
+            } else {
+              // If neither container is visible, show fallback message
+              fallbackMessage.style.display = 'block';
+            }
+          }
         } catch (error) {
-          console.error('Error in login language toggle: ' + error.message);
+          console.error('Error in checkAuthAndShowContent:', error);
+          // Show fallback in case of error
+          if (fallbackMessage) {
+            fallbackMessage.style.display = 'block';
+          }
         }
-      });
-    }
+      }
 
-    // Initialize the page
-    function initializePage() {
-      // Apply saved theme
+      // Login form handling
+      if (loginForm) {
+        loginForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const passwordInput = getElement('password');
+          if (!passwordInput) return;
+          
+          const password = passwordInput.value;
+          
+          // Direct password check
+          if (password === correctPassword) {
+            // Correct password
+            if (loginContainer) {
+              loginContainer.style.display = 'none';
+            }
+            if (securityContent) {
+              securityContent.style.display = 'block';
+            }
+            if (passwordInput) {
+              passwordInput.value = '';
+            }
+            if (errorMessage) {
+              errorMessage.textContent = '';
+            }
+            
+            // Store authentication in session storage (will be cleared when browser is closed)
+            sessionStorage.setItem('securityAuthenticated', 'true');
+            
+            // Render security items when authenticated
+            renderSecurityItems();
+          } else {
+            // Incorrect password
+            if (errorMessage) {
+              errorMessage.textContent = translations[currentLanguage].incorrectPassword;
+            }
+          }
+        });
+      }
+
+      // Theme toggle functionality
+      const themeToggle = getElement('themeToggle');
+      const loginThemeToggle = getElement('loginThemeToggle');
+      const body = document.body;
+
+      // Check for saved theme preference
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
         body.setAttribute('data-theme', savedTheme);
       }
-      
-      // Apply saved language
-      const savedLanguage = localStorage.getItem('language');
-      if (savedLanguage) {
-        currentLanguage = savedLanguage;
-      }
-      
-      // Update language text
-      updateLanguage();
-      
-      // Check authentication and show appropriate content
-      checkAuthAndShowContent();
-    }
 
-    // Run initialization when DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', initializePage);
-    
-    // Also run initialization immediately in case the DOM is already loaded
-    // This ensures the page works correctly when returning from another page
-    initializePage();
+      // Main content theme toggle
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const currentTheme = body.getAttribute('data-theme');
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+          body.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+        });
+      }
+
+      // Login screen theme toggle
+      if (loginThemeToggle) {
+        loginThemeToggle.addEventListener('click', () => {
+          const currentTheme = body.getAttribute('data-theme');
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+          body.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+        });
+      }
+
+      // Language toggle functionality
+      const languageToggle = getElement('languageToggle');
+      const loginLanguageToggle = getElement('loginLanguageToggle');
+
+      // Main content language toggle
+      if (languageToggle) {
+        languageToggle.addEventListener('click', () => {
+          try {
+            currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
+            localStorage.setItem('language', currentLanguage);
+            updateLanguage();
+          } catch (error) {
+            console.error('Error in language toggle:', error);
+          }
+        });
+      }
+
+      // Login screen language toggle
+      if (loginLanguageToggle) {
+        loginLanguageToggle.addEventListener('click', () => {
+          try {
+            currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
+            localStorage.setItem('language', currentLanguage);
+            updateLanguage();
+          } catch (error) {
+            console.error('Error in login language toggle:', error);
+          }
+        });
+      }
+
+      // Initialize the page
+      function initializePage() {
+        console.log("Initializing page");
+        try {
+          // Apply saved theme
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme) {
+            body.setAttribute('data-theme', savedTheme);
+          }
+          
+          // Apply saved language
+          const savedLanguage = localStorage.getItem('language');
+          if (savedLanguage) {
+            currentLanguage = savedLanguage;
+          }
+          
+          // Update language text
+          updateLanguage();
+          
+          // Check authentication and show appropriate content
+          checkAuthAndShowContent();
+        } catch (error) {
+          console.error('Error in initializePage:', error);
+          // Show fallback in case of error
+          if (fallbackMessage) {
+            fallbackMessage.style.display = 'block';
+          }
+        }
+      }
+
+      // Run initialization immediately
+      initializePage();
+      
+      // Also run when DOM is fully loaded to ensure everything is initialized
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM fully loaded");
+        initializePage();
+      });
+      
+      // Add a window load event as a final fallback
+      window.addEventListener('load', function() {
+        console.log("Window fully loaded");
+        initializePage();
+      });
+    })();
   </script>
 </body>
 </html>
