@@ -577,48 +577,17 @@
     };
 
     // Current language
-    let currentLanguage = 'en';
+    let currentLanguage = localStorage.getItem('language') || 'en';
 
-    // Login form handling
-    const loginForm = document.getElementById('loginForm');
+    // Get DOM elements
     const loginContainer = document.getElementById('loginContainer');
     const securityContent = document.getElementById('securityContent');
     const errorMessage = document.getElementById('errorMessage');
+    const loginForm = document.getElementById('loginForm');
 
     // Simple password check - using direct comparison for simplicity
     // The password is "chicken is top! (main_super_2)"
     const correctPassword = "chicken is top! (main_super_2)";
-
-    loginForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const password = document.getElementById('password').value;
-      
-      // Direct password check
-      if (password === correctPassword) {
-        // Correct password
-        loginContainer.style.display = 'none';
-        securityContent.style.display = 'block';
-        document.getElementById('password').value = '';
-        errorMessage.textContent = '';
-        
-        // Store authentication in session storage (will be cleared when browser is closed)
-        sessionStorage.setItem('securityAuthenticated', 'true');
-        
-        // Render security items when authenticated
-        renderSecurityItems();
-      } else {
-        // Incorrect password
-        errorMessage.textContent = translations[currentLanguage].incorrectPassword;
-      }
-    });
-
-    // Check if already authenticated in this session
-    if (sessionStorage.getItem('securityAuthenticated') === 'true') {
-      loginContainer.style.display = 'none';
-      securityContent.style.display = 'block';
-      // Render security items when already authenticated
-      renderSecurityItems();
-    }
 
     // Security information as objects
     const securityItems = [
@@ -765,6 +734,44 @@
       }
     }
 
+    // Check authentication status and show appropriate content
+    function checkAuthAndShowContent() {
+      if (sessionStorage.getItem('securityAuthenticated') === 'true') {
+        loginContainer.style.display = 'none';
+        securityContent.style.display = 'block';
+        renderSecurityItems();
+      } else {
+        loginContainer.style.display = 'block';
+        securityContent.style.display = 'none';
+      }
+    }
+
+    // Login form handling
+    if (loginForm) {
+      loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const password = document.getElementById('password').value;
+        
+        // Direct password check
+        if (password === correctPassword) {
+          // Correct password
+          loginContainer.style.display = 'none';
+          securityContent.style.display = 'block';
+          document.getElementById('password').value = '';
+          errorMessage.textContent = '';
+          
+          // Store authentication in session storage (will be cleared when browser is closed)
+          sessionStorage.setItem('securityAuthenticated', 'true');
+          
+          // Render security items when authenticated
+          renderSecurityItems();
+        } else {
+          // Incorrect password
+          errorMessage.textContent = translations[currentLanguage].incorrectPassword;
+        }
+      });
+    }
+
     // Theme toggle functionality
     const themeToggle = document.getElementById('themeToggle');
     const loginThemeToggle = document.getElementById('loginThemeToggle');
@@ -777,59 +784,84 @@
     }
 
     // Main content theme toggle
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = body.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-      body.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-    });
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      });
+    }
 
     // Login screen theme toggle
-    loginThemeToggle.addEventListener('click', () => {
-      const currentTheme = body.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    if (loginThemeToggle) {
+      loginThemeToggle.addEventListener('click', () => {
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-      body.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-    });
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      });
+    }
 
     // Language toggle functionality
     const languageToggle = document.getElementById('languageToggle');
     const loginLanguageToggle = document.getElementById('loginLanguageToggle');
 
-    // Check for saved language preference
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage) {
-      currentLanguage = savedLanguage;
+    // Main content language toggle
+    if (languageToggle) {
+      languageToggle.addEventListener('click', () => {
+        try {
+          currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
+          localStorage.setItem('language', currentLanguage);
+          updateLanguage();
+        } catch (error) {
+          console.error('Error in language toggle: ' + error.message);
+        }
+      });
     }
 
-    // Main content language toggle
-    languageToggle.addEventListener('click', () => {
-      try {
-        currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
-        localStorage.setItem('language', currentLanguage);
-        updateLanguage();
-      } catch (error) {
-        console.error('Error in language toggle: ' + error.message);
-      }
-    });
-
     // Login screen language toggle
-    loginLanguageToggle.addEventListener('click', () => {
-      try {
-        currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
-        localStorage.setItem('language', currentLanguage);
-        updateLanguage();
-      } catch (error) {
-        console.error('Error in login language toggle: ' + error.message);
-      }
-    });
+    if (loginLanguageToggle) {
+      loginLanguageToggle.addEventListener('click', () => {
+        try {
+          currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
+          localStorage.setItem('language', currentLanguage);
+          updateLanguage();
+        } catch (error) {
+          console.error('Error in login language toggle: ' + error.message);
+        }
+      });
+    }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the page
+    function initializePage() {
+      // Apply saved theme
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        body.setAttribute('data-theme', savedTheme);
+      }
+      
+      // Apply saved language
+      const savedLanguage = localStorage.getItem('language');
+      if (savedLanguage) {
+        currentLanguage = savedLanguage;
+      }
+      
+      // Update language text
       updateLanguage();
-    });
+      
+      // Check authentication and show appropriate content
+      checkAuthAndShowContent();
+    }
+
+    // Run initialization when DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', initializePage);
+    
+    // Also run initialization immediately in case the DOM is already loaded
+    // This ensures the page works correctly when returning from another page
+    initializePage();
   </script>
 </body>
 </html>
