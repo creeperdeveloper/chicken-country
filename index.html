@@ -1,1265 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.ico" id="favicon">
   <title>Chicken Country</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #f8f9fa;
-      --text-color: #212529;
-      --card-bg: #ffffff;
-      --header-bg: linear-gradient(135deg, #ff9a00, #ff6a00);
-      --button-bg: #ff9a00;
-      --button-hover: #ff6a00;
-      --border-color: #e9ecef;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-      --radius: 12px;
-      --radius-sm: 8px;
-      --radius-lg: 16px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --accent: #ff6a00;
-      --accent-light: #ff9a00;
-      --muted: #6c757d;
-      --link: #0066ff;
-      --danger: #dc3545;
-      --success: #28a745;
+      --bg-color: #f0f4ff;
+      --text-color: #222;
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --button-bg: #ffffffcc;
+      --button-hover-bg: #ffffffee;
+      --border-color: #b0c4ff;
     }
 
-    [data-theme="dark"] {
-      --bg-color: #121212;
-      --text-color: #f8f9fa;
-      --card-bg: #1e1e1e;
-      --header-bg: linear-gradient(135deg, #ff6a00, #ff4500);
-      --button-bg: #ff6a00;
-      --button-hover: #ff4500;
-      --border-color: #2a2a2a;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
-      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
-      --accent: #ff4500;
-      --accent-light: #ff6a00;
-      --muted: #adb5bd;
-      --link: #66a3ff;
+    body.dark {
+      --bg-color: #0b0c2a;
+      --text-color: #fff;
+      --card-bg: rgba(0, 0, 0, 0.6);
+      --button-bg: #000000cc;
+      --button-hover-bg: #000000ee;
+      --border-color: #4b6cff;
     }
 
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      transition: var(--transition);
+      font-family: 'Segoe UI', sans-serif;
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-color);
+      background: var(--bg-color);
       color: var(--text-color);
-      line-height: 1.6;
       min-height: 100vh;
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      background-image: url('/placeholder.svg?height=1080&width=1920');
-      background-attachment: fixed;
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .bubble-bg {
+      position: fixed;
+      inset: 0;
+      background-image: url('/mnt/data/9bb08eb0-2316-44b3-9c44-2fe0d90b753f.png');
       background-size: cover;
+      background-repeat: no-repeat;
       background-position: center;
-    }
-
-    header {
-      background: var(--header-bg);
-      padding: 1.25rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: var(--shadow-md);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-
-    .header-controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    h1 {
-      font-weight: 700;
-      font-size: 1.75rem;
-      margin: 0;
-      color: white;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      letter-spacing: -0.02em;
-    }
-
-    h2 {
-      font-weight: 600;
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--accent);
-      letter-spacing: -0.02em;
-    }
-
-    h3 {
-      font-weight: 600;
-      font-size: 1.25rem;
-      margin-bottom: 0.75rem;
-      letter-spacing: -0.01em;
+      z-index: -1;
+      opacity: 0.3;
     }
 
     .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 2rem;
-    }
-
-    .section {
-      margin-bottom: 2.5rem;
+      max-width: 800px;
+      margin: auto;
       padding: 2rem;
-      background-color: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(10px);
-      background-color: rgba(255, 255, 255, 0.9);
     }
 
-    [data-theme="dark"] .section {
-      background-color: rgba(30, 30, 30, 0.9);
-    }
-
-    .about-section {
-      position: relative;
-    }
-
-    .about-content {
-      min-height: 100px;
-      padding: 1rem;
-      border: 1px dashed var(--border-color);
-      border-radius: var(--radius-sm);
-      margin-bottom: 1rem;
-    }
-
-    .about-content:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.2);
-    }
-
-    .edit-button {
-      position: absolute;
-      top: 2rem;
-      right: 2rem;
-      background-color: var(--button-bg);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 0.5rem 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .edit-button:hover {
-      background-color: var(--button-hover);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .security-link {
-      display: inline-block;
-      margin-top: 1rem;
-      color: var(--link);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-
-    .security-link:hover {
-      color: var(--accent);
-      text-decoration: underline;
-    }
-
-    .member-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    .member-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-sm);
-      transition: var(--transition);
-    }
-
-    .member-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .member-card h3 {
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-
-    .member-card p {
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .member-card p:last-child {
-      margin-bottom: 0;
-    }
-
-    .member-card p strong {
-      font-weight: 600;
-      color: var(--accent-light);
-    }
-
-    .theme-toggle,
-    .language-toggle {
-      background-color: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
+    .login {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .theme-toggle {
-      width: 40px;
-      height: 40px;
-      position: relative;
-      border-radius: 50%;
-    }
-
-    .language-toggle {
-      padding: 0.5rem 1rem;
-      font-weight: 500;
-      font-size: 0.875rem;
-    }
-
-    .theme-toggle:hover,
-    .language-toggle:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .theme-toggle .icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 20px;
-      height: 20px;
-      color: white;
-    }
-
-    .theme-toggle .sun {
-      opacity: 1;
-      display: block;
-    }
-
-    .theme-toggle .moon {
-      opacity: 0;
-      display: none;
-    }
-
-    [data-theme="dark"] .theme-toggle .sun {
-      opacity: 0;
-      display: none;
-    }
-
-    [data-theme="dark"] .theme-toggle .moon {
-      opacity: 1;
-      display: block;
-    }
-
-    @media (max-width: 768px) {
-      .member-list {
-        grid-template-columns: 1fr;
-      }
-
-      .container {
-        padding: 0 1rem;
-        margin: 1.5rem auto;
-      }
-
-      .section {
-        padding: 1.5rem;
-      }
-
-      header {
-        padding: 1rem;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      .edit-button {
-        top: 1.5rem;
-        right: 1.5rem;
-      }
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .section {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-
-    .member-card {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-
-    .member-card:nth-child(2) {
-      animation-delay: 0.1s;
-    }
-
-    .member-card:nth-child(3) {
-      animation-delay: 0.2s;
-    }
-
-    .member-card:nth-child(4) {
-      animation-delay: 0.3s;
-    }
-
-    .member-card:nth-child(5) {
-      animation-delay: 0.4s;
-    }
-
-    /* Security Page Styles */
-    .login-container {
-      max-width: 500px;
-      margin: 5rem auto;
-      padding: 2rem;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--border-color);
+      flex-direction: column;
+      gap: 1rem;
+      padding: 3rem;
+      border-radius: 1rem;
+      background: var(--card-bg);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       text-align: center;
-      backdrop-filter: blur(10px);
-      position: relative;
-      overflow: hidden;
-      display: none;
     }
 
-    .login-header {
-      background: var(--header-bg);
-      margin: -2rem -2rem 2rem -2rem;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: white;
-    }
-
-    .login-header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    [data-theme="dark"] .login-container {
-      background-color: rgba(30, 30, 30, 0.9);
-    }
-
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      text-align: left;
-    }
-
-    .form-group label {
-      font-weight: 500;
-      color: var(--accent);
-    }
-
-    .form-group input {
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.2);
-    }
-
-    .error-message {
-      color: var(--danger);
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-
-    button {
-      padding: 0.75rem 1rem;
-      background-color: var(--button-bg);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    button:hover {
-      background-color: var(--button-hover);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .login-button {
-      width: 100%;
-      padding: 0.875rem;
+    .login input {
+      padding: 0.8rem;
       font-size: 1rem;
-      margin-top: 1rem;
-    }
-
-    .security-content {
-      display: none;
-    }
-
-    .security-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    .security-card {
-      background-color: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-sm);
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
+      border-radius: 0.5rem;
     }
 
-    .security-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--accent);
-      opacity: 0.8;
-    }
-
-    .security-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .security-card h3 {
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-
-    .security-card p {
-      margin-bottom: 0.75rem;
-      font-size: 0.95rem;
-    }
-
-    .security-card p:last-child {
-      margin-bottom: 0;
-    }
-
-    .security-card p strong {
-      font-weight: 600;
-      color: var(--accent-light);
-    }
-
-    .security-image {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: var(--radius-sm);
-      margin-bottom: 1rem;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-bottom: 1.5rem;
-      color: var(--link);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-
-    .back-link:hover {
-      color: var(--accent);
-    }
-
-    .back-to-home {
-      display: inline-block;
-      margin-top: 1.5rem;
-      color: var(--link);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: var(--transition);
-    }
-
-    .back-to-home:hover {
-      color: var(--accent);
-      text-decoration: underline;
-    }
-
-    .logout-button {
-      margin-top: 1.5rem;
-      padding: 0.5rem 1rem;
-      background-color: var(--danger);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-weight: 500;
+    .login button {
+      padding: 0.8rem;
+      font-size: 1rem;
+      background: var(--button-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
       cursor: pointer;
-      transition: var(--transition);
+      transition: 0.3s;
     }
-    
-    .logout-button:hover {
-      background-color: #b02a37;
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+
+    .login button:hover {
+      background: var(--button-hover-bg);
+    }
+
+    .toggle-darkmode {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+    }
+
+    .list-section {
+      margin-top: 4rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
   </style>
 </head>
 
 <body>
-  <!-- Main Content -->
-  <div id="mainContent">
-    <header>
-      <h1>Chicken Country</h1>
-      <div class="header-controls">
-        <button class="language-toggle" id="languageToggle">日本語</button>
-        <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
-          <svg class="icon sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg class="icon moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
-      </div>
-    </header>
+  <div class="bubble-bg"></div>
 
-    <div class="container">
-      <section class="section about-section">
-        <h2 id="aboutTitle">About</h2>
-        <div class="about-content" id="aboutContent" contenteditable="false">
-          Welcome to Chicken Country! This is the official website for our community.
-        </div>
-        <button class="edit-button" id="editButton">Edit</button>
-        <a href="#" class="security-link" id="securityLink">Security Information</a>
-      </section>
+  <button class="toggle-darkmode" onclick="toggleDarkMode()">🌙</button>
 
-      <section class="section">
-        <h2 id="membersTitle">Members</h2>
-        <div class="member-list" id="memberList">
-          <!-- Members will be displayed here -->
-        </div>
-      </section>
+  <div class="container">
+    <div id="login" class="login">
+      <h2>Enter Password</h2>
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="checkPassword()">Login</button>
     </div>
-  </div>
 
-  <!-- Security Login -->
-  <div class="login-container" id="loginContainer">
-    <div class="login-header">
-      <h1 id="login-title">Security Information</h1>
-      <div class="header-controls">
-        <button class="language-toggle" id="loginLanguageToggle">日本語</button>
-        <button id="loginThemeToggle" class="theme-toggle" aria-label="Toggle dark mode">
-          <svg class="icon sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg class="icon moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
+    <div id="main-content" style="display: none">
+      <h1 style="text-align: center; margin-bottom: 2rem;">Chicken Country</h1>
+
+      <div class="list-section">
+        <h2>Member List</h2>
+        <div id="member-list"></div>
       </div>
-    </div>
-    
-    <p id="login-description">Please enter the password to access security information.</p>
 
-    <form class="login-form" id="loginForm">
-      <div class="form-group">
-        <label for="password" id="password-label">Password</label>
-        <input type="password" id="password" name="password" required>
-        <div class="error-message" id="errorMessage"></div>
+      <div class="list-section">
+        <h2>URL</h2>
+        <div id="url-list"></div>
       </div>
-      <button type="submit" id="login-button" class="login-button">Access Information</button>
-    </form>
-    
-    <a href="#" class="back-to-home" id="login-back-link">← Back to Home</a>
-  </div>
 
-  <!-- Security Content -->
-  <div class="container security-content" id="securityContent">
-    <header>
-      <h1>Chicken Country</h1>
-      <div class="header-controls">
-        <button class="language-toggle" id="securityLanguageToggle">日本語</button>
-        <button id="securityThemeToggle" class="theme-toggle" aria-label="Toggle dark mode">
-          <svg class="icon sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg class="icon moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
+      <div class="list-section">
+        <h2>Bord (Event, Data, etc.)</h2>
+        <div id="data-list"></div>
       </div>
-    </header>
-
-    <div class="section">
-      <a href="#" class="back-link" id="back-link">← Back to Home</a>
-      <h2 id="security-title">Security Information</h2>
-
-      <div class="security-list" id="securityList">
-        <!-- Security items will be displayed here -->
-      </div>
-      
-      <button id="logoutButton" class="logout-button">Logout</button>
     </div>
   </div>
 
   <script>
-    // Immediately execute this code to ensure it runs as soon as possible
-    (function() {
-      console.log("Script starting execution");
-      
-      // Language translations
-      const translations = {
-        en: {
-          aboutTitle: 'About',
-          membersTitle: 'Members',
-          role: 'Role',
-          permissions: 'Permissions',
-          notes: 'Notes',
-          securityLink: 'Security Information',
-          editButton: 'Edit',
-          loginTitle: 'Security Information',
-          loginDescription: 'Please enter the password to access security information.',
-          passwordLabel: 'Password',
-          loginButton: 'Access Information',
-          backLink: '← Back to Home',
-          securityTitle: 'Security Information',
-          overview: 'Overview',
-          creator: 'Creator',
-          languageButton: '日本語',
-          incorrectPassword: 'Incorrect password. Please try again.',
-          logoutButton: 'Logout',
-          aboutContent: 'Welcome to Chicken Country! This is the official website for our community.'
-        },
-        ja: {
-          aboutTitle: '概要',
-          membersTitle: 'メンバー',
-          role: '役割',
-          permissions: '権限',
-          notes: 'メモ',
-          securityLink: 'セキュリティ情報',
-          editButton: '編集',
-          loginTitle: 'セキュリティ情報',
-          loginDescription: 'セキュリティ情報にアクセスするにはパスワードを入力してください。',
-          passwordLabel: 'パスワード',
-          loginButton: '情報にアクセス',
-          backLink: '← ホームに戻る',
-          securityTitle: 'セキュリティ情報',
-          overview: '概要',
-          creator: '作成者',
-          languageButton: 'English',
-          incorrectPassword: 'パスワードが間違っています。もう一度お試しください。',
-          logoutButton: 'ログアウト',
-          aboutContent: 'チキン国へようこそ！これは私たちのコミュニティの公式ウェブサイトです。'
-        }
-      };
+    const members = [
+      { name: "FlimsyDeer05833 (creeper_developer)", id: "FlimsyDeer05833", desc: "- 創設者<br>- triple vip", role: "開発 王 採掘", permission: "max admin" },
+      { name: "ozisan", id: "ozisan", desc: " ", role: "開発 採掘", permission: "super admin" },
+      { name: "yutty", id: "yutty", desc: "- 創設者<br>- triple vip", role: "回路 開発 採掘", permission: "super admin" },
+      { name: "いかちゃん", id: "いかちゃん", desc: "- triple vip", role: "採掘 壁制作", permission: "super admin" },
+      { name: "pigrin", id: "pigrin", desc: "- triple vip", role: "開発 採掘 壁制作", permission: "super admin" },
+      { name: "sabakan8484", id: "sabakan8484", desc: " ", role: "軍事開発", permission: "super admin"}
+    ];
 
-      // Current language - default to English if not set
-      let currentLanguage = localStorage.getItem('language') || 'en';
-      console.log("Current language:", currentLanguage);
+    const urls = [
+      { name: "Discord", url: "https://discord.gg/vQndTEjscX", desc: "Discord Invite URL", author: "FlimsyDeer05833 / creeper_developer", time: "2025-04-15" },
+      { name: "Official Documents", url: "https://docs.google.com/document/d/1YQK5H-xH_llMwYCrQJRllQ3Mvlw4r9D9H9MOeaSOphs/edit?usp=sharing", desc: "Official Google Documents", author: "FlimsyDeer05833 / creeper_developer", time: "2025-04-15" }
+    ];
 
-      // Initialize security verification
-      function initSecurity() {
-        // This function initializes the security verification system
-        // It creates a verification key in localStorage if it doesn't exist
-        if (!localStorage.getItem('securityKey')) {
-          // Generate a random salt
-          const randomSalt = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-            .map(b => b.toString(16).padStart(2, '0')).join('');
-          
-          localStorage.setItem('securitySalt', randomSalt);
-          
-          // Pre-compute the hash of the correct password with the salt
-          // This is done only once when the site is first loaded
-          hashPassword('chicken_security_view_key-code-123', randomSalt)
-            .then(hash => {
-              localStorage.setItem('securityKey', hash);
-            });
-        }
+    const datas = [
+      { name: "security update", url: "", desc: "security update<br><br> - time: unkown", author: "FlimsyDeer05833 / creeper_developer", time: "2025-04-16" }
+    ];
+
+    function checkPassword() {
+      const pw = document.getElementById("password").value;
+      if (pw === "chicken_data") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+      } else if (pw != "chicken_data") {
+        alert("password is wrong");
+      } else {
+        alert("Sorry, there was a problem logging in. Please try again.")
       }
+    }
 
-      // Simple hash function using SHA-256
-      async function hashPassword(password, salt) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password + salt);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-      }
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
 
-      // Member data
-      const members = [
-        {
-          name: "Flimsy",
-          role: "Admin",
-          permissions: "Full access",
-          notes: "Founder of Chicken Country"
-        },
-        {
-          name: "Yutty",
-          role: "Moderator",
-          permissions: "Edit access",
-          notes: "Co-founder of Chicken Country"
-        },
-        {
-          name: "Creeper",
-          role: "Developer",
-          permissions: "Edit access",
-          notes: "Technical support"
-        },
-        {
-          name: "Chicken",
-          role: "Mascot",
-          permissions: "View only",
-          notes: "Bawk bawk!"
-        }
-      ];
-
-      // Security information as objects
-      const securityItems = [
-        {
-          id: 1,
-          name: "オートドアセキュリティ",
-          nameEn: "Auto Door Security",
-          image: "/placeholder.svg?height=180&width=320",
-          overview: "キーカードであくドアでネザライトブロックで出来ている",
-          overviewEn: "Door made of netherite blocks that opens with a key card",
-          creator: "yutty & Flimsy",
-          notes: " ",
-          notesEn: " "
-        }, {
-          id: 2,
-          name: "落とし穴セキュリティ",
-          nameEn: "Pitfall Security",
-          image: "/placeholder.svg?height=180&width=320",
-          overview: "プレイヤーを確実に落として下から攻撃できるようにするセキュリティ",
-          overviewEn: "Security system that reliably drops players and allows attacks from below",
-          creator: "FlimsyDeer05833 / creeper_developer",
-          notes: " ",
-          notesEn: " "
-        },
-        {
-          id: 3,
-          name: "無限迷路セキュリティ",
-          nameEn: "Infinite Maze Security",
-          image: "/placeholder.svg?height=180&width=320",
-          overview: "制御ルームからクリアできるか無限ループするかを設定できるセキュリティ",
-          overviewEn: "Security system where you can set whether it can be cleared or loops infinitely from the control room",
-          creator: "FlimsyDeer05833 / creeper_developer",
-          notes: " ",
-          notesEn: " "
-        },
-        {
-          id: 4,
-          name: "NoEscapeセキュリティ",
-          nameEn: "NoEscape Security",
-          image: "/placeholder.svg?height=180&width=320",
-          overview: "一度入ったらレバーなどを使わない限り戻れないセキュリティ",
-          overviewEn: "Security system where once entered, you cannot return without using levers, etc.",
-          creator: "FlimsyDeer05833 / creeper_developer",
-          notes: " ",
-          notesEn: " "
-        }, {
-          id: 5,
-          name: "手動認証セキュリティ",
-          nameEn: "Manual Authentication Security",
-          image: "/placeholder.svg?height=180&width=320",
-          overview: "プレイヤーが実際に認証を行ってドアがあくセキュリティ 認証失敗した場合は下に落とすセキュリティも開発中",
-          overviewEn: "Security system where players actually perform authentication to open doors. A system to drop players if authentication fails is also under development",
-          creator: "FlimsyDeer05833 / creeper_developer",
-          notes: " ",
-          notesEn: " "
-        }, {
-          id: 6,
-          name: "無限ループ迷路セキュリティ2",
-          nameEn: "Infinite Loop Maze Security 2",
-          image: "/placeholder.svg?height=180&width=320",
-          overview: "制御ルームからクリアできるかを設定できる迷路",
-          overviewEn: "Maze where you can set whether it can be cleared from the control room",
-          creator: "FlimsyDeer05833 / creeper_developer",
-          notes: " ",
-          notesEn: " "
-        }, {
-          id: 7,
-          name: "4Fセキュリティ 作成中",
-          nameEn: "4F Security (In Development)",
-          image: "/placeholder.svg?height=180&width=320",
-          overview: " ",
-          overviewEn: " ",
-          creator: " ",
-          notes: " ",
-          notesEn: " "
-        },
-      ];
-
-      // Get DOM elements - with error handling
-      function getElement(id) {
-        const element = document.getElementById(id);
-        if (!element) {
-          console.error(`Element with ID "${id}" not found`);
-          return null;
-        }
-        return element;
-      }
-
-      // Main elements
-      const mainContent = getElement('mainContent');
-      const aboutTitle = getElement('aboutTitle');
-      const aboutContent = getElement('aboutContent');
-      const membersTitle = getElement('membersTitle');
-      const memberList = getElement('memberList');
-      const editButton = getElement('editButton');
-      const securityLink = getElement('securityLink');
-
-      // Security elements
-      const loginContainer = getElement('loginContainer');
-      const securityContent = getElement('securityContent');
-      const errorMessage = getElement('errorMessage');
-      const loginForm = getElement('loginForm');
-      const logoutButton = getElement('logoutButton');
-      const backLink = getElement('back-link');
-      const loginBackLink = getElement('login-back-link');
-
-      // Display members
-      function renderMembers() {
-        if (!memberList) return;
-        
-        memberList.innerHTML = '';
-        
-        members.forEach(member => {
-          const memberCard = document.createElement('div');
-          memberCard.className = 'member-card';
-          
-          const roleLabel = translations[currentLanguage].role;
-          const permissionsLabel = translations[currentLanguage].permissions;
-          const notesLabel = translations[currentLanguage].notes;
-          
-          memberCard.innerHTML = `
-            <h3>${member.name}</h3>
-            <p><strong>${roleLabel}:</strong> ${member.role}</p>
-            <p><strong>${permissionsLabel}:</strong> ${member.permissions}</p>
-            <p><strong>${notesLabel}:</strong> ${member.notes}</p>
-          `;
-          
-          memberList.appendChild(memberCard);
-        });
-      }
-
-      // Display security items
-      function renderSecurityItems() {
-        console.log("Rendering security items");
-        const securityList = getElement('securityList');
-        if (!securityList) {
-          console.error('Security list element not found');
-          return;
-        }
-
-        securityList.innerHTML = '';
-
-        securityItems.forEach(item => {
-          const securityCard = document.createElement('div');
-          securityCard.className = 'security-card';
-
-          const name = currentLanguage === 'en' ? item.nameEn : item.name;
-          const overview = currentLanguage === 'en' ? item.overviewEn : item.overview;
-          const notes = currentLanguage === 'en' ? item.notesEn : item.notes;
-          const overviewLabel = translations[currentLanguage].overview;
-          const creatorLabel = translations[currentLanguage].creator;
-          const notesLabel = translations[currentLanguage].notes;
-
-          securityCard.innerHTML = `
-            <img src="${item.image}" alt="${name}" class="security-image">
-            <h3>${name}</h3>
-            <p><strong>${overviewLabel}:</strong> ${overview}</p>
-            <p><strong>${creatorLabel}:</strong> ${item.creator}</p>
-            <p><strong>${notesLabel}:</strong> ${notes}</p>
-          `;
-          securityList.appendChild(securityCard);
-        });
-      }
-
-      // Update language function
-      function updateLanguage() {
-        console.log("Updating language to:", currentLanguage);
-        try {
-          // Update main content
-          if (aboutTitle) aboutTitle.textContent = translations[currentLanguage].aboutTitle;
-          if (membersTitle) membersTitle.textContent = translations[currentLanguage].membersTitle;
-          if (editButton) editButton.textContent = translations[currentLanguage].editButton;
-          if (securityLink) securityLink.textContent = translations[currentLanguage].securityLink;
-          
-          // Update about content if it hasn't been edited
-          const savedAboutContent = localStorage.getItem('aboutContent');
-          if (!savedAboutContent && aboutContent) {
-            aboutContent.textContent = translations[currentLanguage].aboutContent;
-          }
-          
-          // Update security login
-          const loginTitle = getElement('login-title');
-          const loginDescription = getElement('login-description');
-          const passwordLabel = getElement('password-label');
-          const loginButton = getElement('login-button');
-          
-          if (loginTitle) loginTitle.textContent = translations[currentLanguage].loginTitle;
-          if (loginDescription) loginDescription.textContent = translations[currentLanguage].loginDescription;
-          if (passwordLabel) passwordLabel.textContent = translations[currentLanguage].passwordLabel;
-          if (loginButton) loginButton.textContent = translations[currentLanguage].loginButton;
-          if (loginBackLink) loginBackLink.textContent = translations[currentLanguage].backLink;
-          
-          // Update security content
-          const securityTitle = getElement('security-title');
-          if (securityTitle) securityTitle.textContent = translations[currentLanguage].securityTitle;
-          if (backLink) backLink.textContent = translations[currentLanguage].backLink;
-          if (logoutButton) logoutButton.textContent = translations[currentLanguage].logoutButton;
-          
-          // Update language toggle buttons
-          const languageToggle = getElement('languageToggle');
-          const loginLanguageToggle = getElement('loginLanguageToggle');
-          const securityLanguageToggle = getElement('securityLanguageToggle');
-          
-          if (languageToggle) languageToggle.textContent = translations[currentLanguage].languageButton;
-          if (loginLanguageToggle) loginLanguageToggle.textContent = translations[currentLanguage].languageButton;
-          if (securityLanguageToggle) securityLanguageToggle.textContent = translations[currentLanguage].languageButton;
-          
-          // Re-render members and security items
-          renderMembers();
-          if (securityContent && securityContent.style.display === 'block') {
-            renderSecurityItems();
-          }
-
-          // Update HTML lang attribute
-          document.documentElement.lang = currentLanguage;
-        } catch (error) {
-          console.error('Error in updateLanguage:', error);
-        }
-      }
-
-      // Initialize the page
-      function initializePage() {
-        console.log("Initializing page");
-        try {
-          // Initialize security
-          initSecurity();
-          
-          // Apply saved theme
-          const savedTheme = localStorage.getItem('theme');
-          if (savedTheme) {
-            document.body.setAttribute('data-theme', savedTheme);
-          }
-          
-          // Apply saved language
-          const savedLanguage = localStorage.getItem('language');
-          if (savedLanguage) {
-            currentLanguage = savedLanguage;
-          }
-          
-          // Load saved about content
-          const savedAboutContent = localStorage.getItem('aboutContent');
-          if (savedAboutContent && aboutContent) {
-            aboutContent.innerHTML = savedAboutContent;
-          }
-          
-          // Update language text
-          updateLanguage();
-          
-          // Render members
-          renderMembers();
-          
-          // Show main content by default
-          if (mainContent) mainContent.style.display = 'block';
-          if (loginContainer) loginContainer.style.display = 'none';
-          if (securityContent) securityContent.style.display = 'none';
-        } catch (error) {
-          console.error('Error in initializePage:', error);
-        }
-      }
-
-      // Edit button functionality
-      if (editButton && aboutContent) {
-        editButton.addEventListener('click', () => {
-          const isEditable = aboutContent.contentEditable === 'true';
-          
-          if (isEditable) {
-            // Save changes
-            aboutContent.contentEditable = 'false';
-            editButton.textContent = translations[currentLanguage].editButton;
-            aboutContent.classList.remove('editing');
-            
-            // Save to localStorage
-            localStorage.setItem('aboutContent', aboutContent.innerHTML);
-          } else {
-            // Enable editing
-            aboutContent.contentEditable = 'true';
-            editButton.textContent = 'Save';
-            aboutContent.classList.add('editing');
-            aboutContent.focus();
-          }
-        });
-      }
-
-      // Security link functionality
-      if (securityLink) {
-        securityLink.addEventListener('click', (e) => {
-          e.preventDefault();
-          
-          if (mainContent) mainContent.style.display = 'none';
-          if (loginContainer) loginContainer.style.display = 'block';
-          if (securityContent) securityContent.style.display = 'none';
-          
-          // Clear password field
-          const passwordInput = getElement('password');
-          if (passwordInput) passwordInput.value = '';
-          
-          // Clear error message
-          if (errorMessage) errorMessage.textContent = '';
-          
-          // Update URL without reloading
-          history.pushState(null, '', '#security');
-        });
-      }
-
-      // Login form handling
-      if (loginForm) {
-        loginForm.addEventListener('submit', async function (e) {
-          e.preventDefault();
-          const passwordInput = getElement('password');
-          if (!passwordInput) return;
-          
-          const password = passwordInput.value;
-          const storedSalt = localStorage.getItem('securitySalt');
-          const storedHash = localStorage.getItem('securityKey');
-          
-          if (!storedSalt || !storedHash) {
-            console.error('Security not initialized properly');
-            return;
-          }
-          
-          // Hash the password and compare
-          try {
-            const hashedPassword = await hashPassword(password, storedSalt);
-            
-            if (hashedPassword === storedHash) {
-              // Correct password
-              if (loginContainer) loginContainer.style.display = 'none';
-              if (securityContent) securityContent.style.display = 'block';
-              if (passwordInput) passwordInput.value = '';
-              if (errorMessage) errorMessage.textContent = '';
-              
-              // Render security items when authenticated
-              renderSecurityItems();
-            } else {
-              // Incorrect password
-              if (errorMessage) {
-                errorMessage.textContent = translations[currentLanguage].incorrectPassword;
-              }
-            }
-          } catch (error) {
-            console.error('Error hashing password:', error);
-          }
-        });
-      }
-      
-      // Logout button handling
-      if (logoutButton) {
-        logoutButton.addEventListener('click', function() {
-          // Show login screen, hide security content
-          if (loginContainer) loginContainer.style.display = 'block';
-          if (securityContent) securityContent.style.display = 'none';
-        });
-      }
-      
-      // Back links
-      if (backLink) {
-        backLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          if (mainContent) mainContent.style.display = 'block';
-          if (loginContainer) loginContainer.style.display = 'none';
-          if (securityContent) securityContent.style.display = 'none';
-          
-          // Update URL without reloading
-          history.pushState(null, '', '#');
-        });
-      }
-      
-      if (loginBackLink) {
-        loginBackLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          if (mainContent) mainContent.style.display = 'block';
-          if (loginContainer) loginContainer.style.display = 'none';
-          if (securityContent) securityContent.style.display = 'none';
-          
-          // Update URL without reloading
-          history.pushState(null, '', '#');
-        });
-      }
-
-      // Theme toggle functionality
-      const themeToggle = getElement('themeToggle');
-      const loginThemeToggle = getElement('loginThemeToggle');
-      const securityThemeToggle = getElement('securityThemeToggle');
-      const body = document.body;
-
-      // Check for saved theme preference
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        body.setAttribute('data-theme', savedTheme);
-      }
-
-      // Theme toggle function
-      function toggleTheme() {
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-      }
-
-      // Add event listeners to theme toggles
-      if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-      if (loginThemeToggle) loginThemeToggle.addEventListener('click', toggleTheme);
-      if (securityThemeToggle) securityThemeToggle.addEventListener('click', toggleTheme);
-
-      // Language toggle functionality
-      const languageToggle = getElement('languageToggle');
-      const loginLanguageToggle = getElement('loginLanguageToggle');
-      const securityLanguageToggle = getElement('securityLanguageToggle');
-
-      // Language toggle function
-      function toggleLanguage() {
-        try {
-          currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
-          localStorage.setItem('language', currentLanguage);
-          updateLanguage();
-        } catch (error) {
-          console.error('Error in language toggle:', error);
-        }
-      }
-
-      // Add event listeners to language toggles
-      if (languageToggle) languageToggle.addEventListener('click', toggleLanguage);
-      if (loginLanguageToggle) loginLanguageToggle.addEventListener('click', toggleLanguage);
-      if (securityLanguageToggle) securityLanguageToggle.addEventListener('click', toggleLanguage);
-
-      // Handle URL hash changes
-      window.addEventListener('hashchange', function() {
-        if (location.hash === '#security') {
-          if (mainContent) mainContent.style.display = 'none';
-          if (loginContainer) loginContainer.style.display = 'block';
-          if (securityContent) securityContent.style.display = 'none';
-        } else {
-          if (mainContent) mainContent.style.display = 'block';
-          if (loginContainer) loginContainer.style.display = 'none';
-          if (securityContent) securityContent.style.display = 'none';
-        }
+    function renderList() {
+      const memberList = document.getElementById("member-list");
+      members.forEach((m) => {
+        memberList.innerHTML += `
+            <div class="card">
+              <strong>${m.name}</strong> (${m.id})<br />
+              ${m.desc}<br />
+              Role: ${m.role}<br />
+              Permission: ${m.permission}
+            </div>`;
       });
 
-      // Check URL hash on load
-      if (location.hash === '#security') {
-        if (mainContent) mainContent.style.display = 'none';
-        if (loginContainer) loginContainer.style.display = 'block';
-        if (securityContent) securityContent.style.display = 'none';
-      }
-
-      // Run initialization
-      initializePage();
-      
-      // Also run when DOM is fully loaded
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM fully loaded");
-        initializePage();
+      const urlList = document.getElementById("url-list");
+      urls.forEach((u) => {
+        urlList.innerHTML += `
+            <div class="card">
+              <a href="${u.url}" target="_blank"><strong>${u.name}</strong></a><br />
+              ${u.desc}<br />
+              Created By: ${u.author} / Time: ${u.time}
+            </div>`;
       });
-    })();
+
+      const datalist = document.getElementById("data-list");
+      datas.forEach((u) => {
+        datalist.innerHTML += `
+            <div class="card">
+              <a><strong>${u.name}</strong></a><br />
+              ${u.desc}<br />
+              Created By: ${u.author} / Time: ${u.time}
+            </div>`;
+      });
+    }
+
+    window.onload = renderList;
   </script>
 </body>
+
 </html>
